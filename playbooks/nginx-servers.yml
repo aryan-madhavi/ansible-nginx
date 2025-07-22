@@ -34,9 +34,6 @@
     - name: Set Node.js 22 as default via alternatives
       ansible.builtin.command: alternatives --set node /usr/bin/node-22
 
-    - name: Set npm for Node.js 22 as default via alternatives
-      ansible.builtin.command: alternatives --set npm /usr/bin/npm-22
-
     - name: Clone the ansible-nginx repo on remote host
       ansible.builtin.git:
         repo: "{{ repo_url }}"
@@ -57,9 +54,9 @@
     - name: Copy built app to nginx web root
       ansible.builtin.copy:
         src: "{{ app_path }}/dist/"
-        dest: /var/www/html/
-        owner: www-data
-        group: www-data
+        dest: /usr/share/nginx/html/
+        owner: nginx
+        group: nginx
         mode: 0755
         remote_src: true
 
@@ -68,11 +65,6 @@
         name: nginx
         state: started
         enabled: true
-
-    - name: Allow HTTP through UFW firewall
-      community.general.ufw:
-        rule: allow
-        name: "Nginx HTTP"
 
     - name: Cleanup - Remove cloned repository and app directory
       ansible.builtin.file:

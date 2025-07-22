@@ -1,0 +1,28 @@
+- name: Configure Nginx load balancer on loadbalancer host
+  hosts: localhost
+  become: true
+
+  vars:
+    web_servers: "{{ groups['aws_ec2'] }}"
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Deploy nginx load balancer config
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/../templates/nginx-lb.conf.j2"
+        dest: /etc/nginx/conf.d/loadbalancer.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify:
+        - Reload nginx
+
+  handlers:
+    - name: Reload nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted
