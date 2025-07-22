@@ -6,6 +6,7 @@
   vars:
     repo_path: /home/ec2-user/temp
     repo_url: "https://github.com/aryan-madhavi/ansible-nginx.git"
+    app_path: "{{ repo_path }}/files"
 
   tasks:
     # - name: Create remote ansible tmp directory
@@ -26,7 +27,7 @@
           - git
           - curl-minimal
           - nginx
-          - nodejs20
+          - nodejs22
           - npm
         state: present
 
@@ -40,16 +41,16 @@
     - name: Install Node.js dependencies
       ansible.builtin.command: npm install
       args:
-        chdir: "{{ repo_path }}"
+        chdir: "{{ app_path }}"
 
     - name: Build React app
       ansible.builtin.command: npm run build
       args:
-        chdir: "{{ repo_path }}"
+        chdir: "{{ app_path }}"
 
     - name: Copy built app to nginx web root
       ansible.builtin.copy:
-        src: "{{ repo_path }}/dist/"
+        src: "{{ app_path }}/dist/"
         dest: /var/www/html/
         owner: www-data
         group: www-data
