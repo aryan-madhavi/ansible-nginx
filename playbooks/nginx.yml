@@ -31,6 +31,12 @@
           - npm
         state: present
 
+    - name: Set Node.js 22 as default via alternatives
+      ansible.builtin.command: alternatives --set node /usr/bin/node-22
+
+    - name: Set npm for Node.js 22 as default via alternatives
+      ansible.builtin.command: alternatives --set npm /usr/bin/npm-22
+
     - name: Clone the ansible-nginx repo on remote host
       ansible.builtin.git:
         repo: "{{ repo_url }}"
