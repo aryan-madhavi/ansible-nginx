@@ -1,0 +1,26 @@
+- name: Launch EC2 instances with unique names
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    instance_count: 2
+
+  tasks:
+    - name: Launch EC2 instance with unique name
+      amazon.aws.ec2_instance:
+        name: "webserver-{{ item }}"
+        key_name: "ansible-key-pair"
+        region: ap-south-1
+        instance_type: t2.micro
+        image_id: ami-0a1235697f4afa8a4
+        wait: true
+        count: 1
+        security_group: "sg-02d290fb435aa47d1"
+        tags:
+          type: webservers
+      loop: "{{ range(1, instance_count + 1) | list }}"
+      register: ec2_instances
+
+    - name: List DNS
+      ansible.builtin.debug:
+        msg: "{{ ec2_instances.results }}"
