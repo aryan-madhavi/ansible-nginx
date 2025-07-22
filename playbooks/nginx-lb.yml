@@ -11,6 +11,20 @@
         name: nginx
         state: present
 
+    - name: Enable and start nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Create fallback.html
+      ansible.builtin.copy:
+        content: "<h1> Oops, we are under maintenance </h1>"
+        dest: /usr/share/nginx/html/fallback.html
+        owner: root
+        group: root
+        mode: 0644
+
     - name: Deploy nginx load balancer config
       ansible.builtin.template:
         src: "{{ playbook_dir }}/../templates/nginx-lb.conf.j2"
