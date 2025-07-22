@@ -12,13 +12,10 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
 
-        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+        error_page 502 503 504 404 = /fallback.html;
     }
-
-    error_page 502 503 504 = /fallback.html;
 
     location = /fallback.html {
         root /usr/share/nginx/html; 
-        internal;
     }
 }
